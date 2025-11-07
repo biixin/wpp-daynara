@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 // Troca esses números pelos seus reais
 const numbers = [
   "553172645317",
+  "559799570028",
   "556181711719",
   "554498800135",
   "557587089404",
