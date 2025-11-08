@@ -4,18 +4,35 @@ import { createClient } from "redis";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Troca esses números pelos seus reais
-const numbers = [
-  "5521965701466",
-  "5511977877209",
-  "16399514882",
-  "15795675034",
-  "556181711719",
-  "15485612021",
-  "15482891618",
-  "12368843841"
+// Lista de números
+const numbers = [ 
+  "5521965701466", 
+  "5511977877209", 
+  "16399514882", 
+  "15795675034", 
+  "556181711719", 
+  "15485612021", 
+  "15482891618", 
+  "12368843841" 
 ];
 
+// Lista de mensagens
+const messages = [
+  "Oi quero ver seus conteúdos",
+  "Oi gata quero ver seus conteúdos",
+  "Oi gatinha quero ver seus conteúdos",
+  "Oi anjo quero ver seus conteúdos",
+  "Oi me mostra seus conteúdos",
+  "Oi tudo bem?",
+  "Oi vamos conversar?",
+  "Oi tudo joia?",
+  "Oi tudo bom?",
+  "Oi quero comprar seus conteúdos",
+  "Oi podemos conversar?",
+  "Oi quero te conhecer"
+];
+
+// Conexão com Redis
 const REDIS_URL = process.env.REDIS_URL;
 if (!REDIS_URL) {
   console.error("ERRO: variável REDIS_URL não definida.");
@@ -31,22 +48,28 @@ await redis.connect();
 // Health check
 app.get("/health", (req, res) => res.send("ok"));
 
-// Rotator endpoint
+// Endpoint principal
 app.get("/", async (req, res) => {
   try {
-    // INCR é atômico no Redis — incrementa o contador global
+    // Incrementa contador no Redis
     const counter = await redis.incr("whatsapp:counter");
 
-    // calcula o índice circular (counter - 1) % numbers.length
+    // Seleciona número de forma circular
     const index = (Number(counter) - 1) % numbers.length;
     const currentNumber = numbers[index];
 
-    // redireciona pro WhatsApp
-    return res.redirect(`https://wa.me/${currentNumber}`);
+    // Escolhe mensagem aleatória
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    const text = encodeURIComponent(randomMessage);
+
+    // Redireciona pro WhatsApp com mensagem
+    return res.redirect(`https://wa.me/${currentNumber}?text=${text}`);
   } catch (err) {
     console.error("Erro ao acessar Redis:", err);
-    // fallback: redireciona para o primeiro número se der ruim
-    return res.redirect(`https://wa.me/${numbers[0]}`);
+
+    // Fallback — usa primeiro número
+    const fallbackMsg = encodeURIComponent(messages[Math.floor(Math.random() * messages.length)]);
+    return res.redirect(`https://wa.me/${numbers[0]}?text=${fallbackMsg}`);
   }
 });
 
