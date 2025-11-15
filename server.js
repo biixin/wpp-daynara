@@ -8,8 +8,7 @@ const PORT = process.env.PORT || 3000;
 const numbers = [
   "15482520104",
   "12495232691",
-  "13435695207",
-  "15489199859"
+  "13435695207"
 ];
 
 // Lista de mensagens
