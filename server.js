@@ -6,7 +6,6 @@ const PORT = process.env.PORT || 3000;
 
 // Lista de números
 const numbers = [
-  "13686662907",
   "16722010570",
   "15793964253",
   "18734822349",
